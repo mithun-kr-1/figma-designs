@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Figma Designs</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      background-image: url('https://media1.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cnRzd3k2dzNudTl3Z2d3ejV1anpuanpzMWhlMHlmeHhqeXZheWdwMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/kKaVWUDkNq1hcPnzKe/200.webp');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      color: #f7f1f1;
+    }
+    
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+    }
+
+    #bubbles {
+      z-index: -1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    .title {
+      font-size: 3em;
+      animation: fadeIn 2s ease;
+    }
+
+    .card-container {
+      margin-top: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .card {
+      width: 260px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      transition: transform 0.4s, box-shadow 0.4s;
+      cursor: pointer;
+      margin-top: 20px;
+      padding: 20px;
+      text-align: left;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card:hover {
+      transform: scale(1.05) rotateY(10deg);
+      box-shadow: 0 0 30px rgb(250, 69, 24);
+    }
+
+    .card h2 {
+      font-size: 1.4em;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 1em;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 5; transform: translateY(0); }
+    }
+  </style>
+  
+</head>
+<body>
+  <!-- 3D Stars -->
+  <canvas id="bg"></canvas>
+
+  <!-- Floating Bubbles -->
+  <canvas id="bubbles"></canvas>
+
+  <!-- Content -->
+  <div class="container">
+    <h1 class="title">✨ My Figma Designs ✨</h1>
+    <div class="card-container">
+      <a href="https://www.figma.com/proto/jUmentXPDj1x626jq6Kro0/my-portfolio?node-id=0-1&t=pUWqXAxo2FNUH7mq-1" class="card" target="_blank">
+        <h2>My Portfolio</h2>
+        <p>Click to view</p>
+      </a>
+      <a href="https://www.figma.com/proto/jUmentXPDj1x626jq6Kro0/my-portfolio?node-id=0-1&t=pUWqXAxo2FNUH7mq-1" class="card" target="_blank">
+        <h2>My Portfolio</h2>
+        <p>Click to view</p>
+      </a>
+      <a href="https://www.figma.com/proto/iWCtgcklSo4g7Am5UpKrrc/aeroplane?node-id=0-1&t=aq393hbBZPvKQIzL-1" class="card" target="_blank">
+        <h2>Flight booking landing page clone</h2>
+        <p>Click to view</p>
+      </a>
+      <a href="https://www.figma.com/proto/Aun4pGyECh48lLgqAITeO5/bookmyshow?node-id=0-1&t=XoSjXototfjEAMHx-1" class="card" target="_blank">
+        <h2>BookMyShow clone</h2>
+        <p>Click to view</p>
+      </a>
+      
+    </div> 
+  </div>
+
+  <script>
+    // 3D Star Background using THREE.js
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg') });
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.z = 5;
+
+    function addStar() {
+      const geometry = new THREE.SphereGeometry(0.05, 24, 24);
+      const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const star = new THREE.Mesh(geometry, material);
+      const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
+      star.position.set(x, y, z);
+      scene.add(star);
+    }
+
+    Array(300).fill().forEach(addStar);
+
+    function animateStars() {
+      requestAnimationFrame(animateStars);
+      renderer.render(scene, camera);
+    }
+
+    animateStars();
+
+    // Bubbles Background
+    const bubbleCanvas = document.getElementById('bubbles');
+    const ctx = bubbleCanvas.getContext('2d');
+
+    function resizeCanvas() {
+      bubbleCanvas.width = window.innerWidth;
+      bubbleCanvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Bubble {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * bubbleCanvas.width;
+        this.y = bubbleCanvas.height + Math.random() * 100;
+        this.radius = Math.random() * 8 + 2;
+        this.speed = Math.random() * 1.5 + 0.5;
+        this.alpha = Math.random() * 0.3 + 0.3;
+      }
+
+      update() {
+        this.y -= this.speed;
+        if (this.y + this.radius < 0) {
+          this.reset();
+          this.y = bubbleCanvas.height + this.radius;
+        }
+      }
+
+      draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.fill();
+      }
+    }
+
+    const bubbles = Array.from({ length: 80 }, () => new Bubble());
+
+    function animateBubbles() {
+      ctx.clearRect(0, 0, bubbleCanvas.width, bubbleCanvas.height);
+      bubbles.forEach(bubble => {
+        bubble.update();
+        bubble.draw(ctx);
+      });
+      requestAnimationFrame(animateBubbles);
+    }
+
+    animateBubbles();
+  </script>
+</body>
+</html>
